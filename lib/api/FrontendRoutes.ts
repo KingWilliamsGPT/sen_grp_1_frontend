@@ -7,7 +7,12 @@ export const Routes = {
     loginSecondFactor: "/login/2fa",
     register: "/register",
     dashboard: "/dashboard",
-    // Add more routes as needed
+    
+    // MESA Routes
+    mesa: "/mesa",
+    mesaChat: "/mesa?mode=chat",
+    mesaExpert: "/mesa?mode=expert",
+    mesaVoice: "/mesa?mode=voice",
 }
 
 export const FrontendRoutes = Routes;
