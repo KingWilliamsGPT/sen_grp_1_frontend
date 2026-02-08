@@ -15,13 +15,13 @@ export function MesaChat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
-    conversationHistory,
+    conversationHistory = [],
     sendMessage,
     clearConversation,
     isLoading,
     error,
-    extractedSymptoms,
-    suggestedDiseases,
+    extractedSymptoms = [],
+    suggestedDiseases = [],
     selectedModel,
   } = useMesaStore();
 
