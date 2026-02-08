@@ -135,14 +135,24 @@ export const useMesaStore = create<MesaState & MesaActions>()(
         initialize: async () => {
           if (get().isInitialized) return;
           
-          set({ isLoading: true, error: null });
+          // Mark initialized immediately so UI doesn't block
+          // Data will load in background
+          set({ isInitialized: true, isLoading: true, error: null });
           
           try {
             // Fetch all metadata in parallel
             const [symptoms, diseases, modelsResponse] = await Promise.all([
-              MesaService.getSymptoms(),
-              MesaService.getDiseases(),
-              MesaService.getModels(),
+              MesaService.getSymptoms().catch(() => []),
+              MesaService.getDiseases().catch(() => []),
+              MesaService.getModels().catch(() => ({
+                models: [{
+                  id: "llama-3.3-70b-versatile",
+                  name: "Llama 3.3 70B",
+                  description: "Default model",
+                  context_window: 128000,
+                }],
+                default_model: "llama-3.3-70b-versatile",
+              })),
             ]);
 
             set({
@@ -151,12 +161,12 @@ export const useMesaStore = create<MesaState & MesaActions>()(
               availableModels: modelsResponse.models,
               defaultModel: modelsResponse.default_model,
               selectedModel: modelsResponse.default_model,
-              isInitialized: true,
               isLoading: false,
             });
           } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to initialize MESA";
-            set({ error: message, isLoading: false });
+            // Don't block UI on initialization failure
+            console.warn("MESA initialization warning:", error);
+            set({ isLoading: false });
           }
         },
 
