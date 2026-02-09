@@ -13,6 +13,7 @@ import {
   KeyboardEvent,
   useCallback,
 } from "react";
+import { createPortal } from "react-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMesaStore } from "@/lib/api/stores/mesaStore";
@@ -364,7 +365,7 @@ export function MesaChat() {
     .filter((i) => i !== -1)
     .pop();
 
-  return (
+  const chatContent = (
     <div className={cn("mesa-chat", isExpanded && "mesa-chat-expanded")}>
       {/* Expand/Collapse Header */}
       <div className="mesa-chat-toolbar">
@@ -583,4 +584,11 @@ export function MesaChat() {
       </form>
     </div>
   );
+
+  // Use portal when expanded to break out of parent stacking context
+  if (isExpanded && typeof document !== "undefined") {
+    return createPortal(chatContent, document.body);
+  }
+
+  return chatContent;
 }
